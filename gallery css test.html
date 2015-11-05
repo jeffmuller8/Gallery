@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Gallery</title>
+    <link rel="stylesheet" type="text/css" href="style2.css">
+
+  </head>
+
+  <body>
+    <div id="container">
+      <div id="galleryBox">
+        <div id="innerGallery"><div id="instafeed"></div></div>
+
+        </div>
+      </div>
+    </div>
+
+  </body>
+  <script type="text/javascript" src="js/instafeed.min.js"></script>
+  <script type="text/javascript">
+  function init() {
+
+    var feed = new Instafeed({
+      get: 'user',
+      userId: '1418648047',
+      resolution: 'low_resolution',
+      template: '<img class="thumbnail" src="{{model.images.standard_resolution.url}}" />', //href="{{model.images.standard_resolution.url}}
+      clientId: '66e8640ecc1c4145af1bb497cda6897c',
+      after: function() {
+        var backgroundChanger = document.createElement("div");
+        backgroundChanger.id = "backgroundChanger";
+        var lightBox = document.createElement("div");
+        lightBox.id = "lightBox";
+        var expandedImg = document.createElement("img");
+        var thumbnails = document.getElementsByClassName("thumbnail");
+        var innerGallery = document.getElementById("innerGallery");
+        for (i = 0; i < thumbnails.length; i++) {
+          thumbnails[i].addEventListener("click", expandImage);
+        }
+      function expandImage() {
+        expandImage = this;
+        expandedImg.src = this.src;
+        document.body.appendChild(backgroundChanger);
+        backgroundChanger.appendChild(lightBox);
+        lightBox.appendChild(expandedImg);
+        lightBox.style.width = expandedImg.width + "px";
+        expandedImg.addEventListener("click", removeImage);
+      }
+
+
+      function removeImage() {
+        document.body.removeChild(backgroundChanger);
+        backgroundChanger.removeChild(lightBox);
+        lightBox.removeChild(expandedImg);
+        expandedImg.removeEventListener("click", removeImage);
+      }
+    }
+    });
+
+    feed.run();
+
+
+
+
+    var rgb = getAverageRGB(document.getElementById("i"));
+    document.body.style.backgroundColor = "rgb('+rgb.r+', '+rgb.b+', '+rgb.g+')";
+
+    function getAverageRGB(imgEl) {
+      var blockSize = 5, //every 5 pixels
+          defaultRGB = {r:0, g:0, b:0},
+          canvas = document.createElement,
+          context = canvas.getContext && canvas.getContext('2d'),
+          data, width, height,
+          i = -4,
+          length,
+          rgb = {r:0, g:0, b:0},
+          count = 0;
+
+      if (!context) {
+        return defaultRGB;
+      }
+
+      height = canvas.height = imgEl.naturalHeight || imgEl.offsetHeight || imgEl.height;
+      width = canvas.width = imgEl.naturalWidth || imgEl.offsetWidth || imgEl.width;
+
+      context.drawImage(imgEl, 0, 0);
+
+      try {
+        data = context.getImageData(0, 0, width, height);
+      } catch(e) {
+        console.log("x");
+        return defaultRGB;
+      }
+
+      length = data.data.length;
+
+      while ((i += blockSize * 4) < length) {
+        ++count;
+        rgb.r += data.data[i];
+        rgb.g += data.data[i+1];
+        rgb.b += data.data[i+2];
+      }
+
+      rgb.r = ~~(rgb.r/count);
+      rgb.g = ~~(rgb.g/count);
+      rgb.b = ~~(rgb.b/count);
+
+      return rgb;
+    }
+
+  };
+
+  window.onload = init();
+  </script>
+
+</html>
