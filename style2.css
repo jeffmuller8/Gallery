@@ -21,9 +21,49 @@ body {
   text-align: center;
 }
 
+.imageInfoDiv{
+  background-color: black;
+  color: white;
+  padding: 2%;
+}
+
 .thumbnail {
   margin: 1%;
   display: inline-block;
+}
+
+.caption{
+  font-family: Roboto;
+  font-size: 1em;
+  font-weight: 200;
+  background-color: black;
+  color: white;
+}
+
+.location{
+  font-family: Roboto;
+  background-color: black;
+  color: grey;
+  font-weight: 100;
+  font-size: 2em;
+}
+
+.likes {
+  background-color: black;
+  color: white;
+  font-size: 4em;
+  visibility: hidden;
+  height: 100%;
+  width: 100%;
+  left: 0;
+  right: 0;
+  top: 0;
+  z-index: 999;
+  position: absolute;
+  opacity: .5;
+  text-align: center;
+  vertical-align: middle;
+  line-height: 9em;
 }
 
 #backgroundChanger {
@@ -39,6 +79,7 @@ body {
   position: fixed;
 }
 
+/*change lightbox to class*/
 #lightBox {
   left: 0;
   right: 0;
@@ -47,6 +88,9 @@ body {
   /*height: 800px;
   width: 800px;*/
   position: absolute;
+  -webkit-box-shadow: 0px 0px 41px 0px rgba(0,0,0,0.75);
+  -moz-box-shadow: 0px 0px 41px 0px rgba(0,0,0,0.75);
+  box-shadow: 0px 0px 41px 0px rgba(0,0,0,0.75);
 }
 
 #instafeed img {
@@ -54,4 +98,54 @@ body {
   height: 20em;
   width: 20em;
   margin: 1%;
+
+}
+
+#expandedImg {
+  position: relative;
+  opacity: .5;
+}
+
+.previous {
+  font-family: Roboto;
+  font-weight: 100;
+  color: white;
+  font-size: 120px;
+  height: 150px;
+  width: 150px;
+  top: 35%;
+  left: 5%;
+  position: absolute;
+  background-color: black;
+  -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+  cursor: pointer;
+  border-radius: 150px;
+  text-align: center;
+}
+
+.next {
+  font-family: Roboto;
+  font-weight: 100;
+  color: white;
+  font-size: 120px;
+  height: 150px;
+  width: 150px;
+  left: 86%;
+  top: 35%;
+  position: absolute;
+  background-color: black;
+  -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+  cursor: pointer;
+  border-radius: 150px;
+  text-align: center;
 }

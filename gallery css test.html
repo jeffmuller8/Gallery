@@ -3,7 +3,8 @@
   <head>
     <title>Gallery</title>
     <link rel="stylesheet" type="text/css" href="style2.css">
-
+    <link href='https://fonts.googleapis.com/css?family=Montserrat:400,700' rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Roboto:400,100,100italic,300,300italic,400italic,500,500italic,700,700italic,900italic,900' rel='stylesheet' type='text/css'>
   </head>
 
   <body>
@@ -23,43 +24,137 @@
     var feed = new Instafeed({
       get: 'user',
       userId: '1418648047',
-      resolution: 'low_resolution',
-      template: '<img class="thumbnail" src="{{model.images.standard_resolution.url}}" />', //href="{{model.images.standard_resolution.url}}
+      resolution: 'standard_resolution',
+      template: '<img class="thumbnail" src="{{model.images.standard_resolution.url}}" data-caption="{{caption}}" data-likes="{{likes}} &hearts;" data-location="{{location}}"/>',
       clientId: '66e8640ecc1c4145af1bb497cda6897c',
-      after: function() {
-        var backgroundChanger = document.createElement("div");
-        backgroundChanger.id = "backgroundChanger";
-        var lightBox = document.createElement("div");
-        lightBox.id = "lightBox";
-        var expandedImg = document.createElement("img");
-        var thumbnails = document.getElementsByClassName("thumbnail");
-        var innerGallery = document.getElementById("innerGallery");
-        for (i = 0; i < thumbnails.length; i++) {
-          thumbnails[i].addEventListener("click", expandImage);
-        }
-      function expandImage() {
-        expandImage = this;
-        expandedImg.src = this.src;
-        document.body.appendChild(backgroundChanger);
-        backgroundChanger.appendChild(lightBox);
-        lightBox.appendChild(expandedImg);
-        lightBox.style.width = expandedImg.width + "px";
-        expandedImg.addEventListener("click", removeImage);
+      // custom: '<div class="location">{{location}}</div><div class="caption">{{caption}}</div><div class="likes">{{likes}}</div>',
+      custom: {
+        images: [],
+        currentImage: 0,
+        showImage: function () {
+          var result, image, instafeeder;
+          // if (instafeeder != null) {
+            instafeeder = document.getElementById("instafeed");
+            image = this.options.custom.images[this.options.custom.currentImage];
+            result = this._makeTemplate(this.options.template, {
+              model: image,
+              id: image.id,
+              link: image.link,
+              image: image.images[this.options.resolution].url,
+              caption: this._getObjectProperty(image, 'caption.text'),
+              likes: image.likes.count,
+              comments: image.comments.count,
+              location: this._getObjectProperty(image, 'location.name')
+            });
+            instafeeder.innerHTML = result;
+          }
+          // }
+      },
+      after: expander,
+      success: function (data) {
+        this.options.custom.images = data.data;
+        this.options.custom.showImage.call(this);
       }
 
-
-      function removeImage() {
-        document.body.removeChild(backgroundChanger);
-        backgroundChanger.removeChild(lightBox);
-        lightBox.removeChild(expandedImg);
-        expandedImg.removeEventListener("click", removeImage);
-      }
-    }
     });
 
     feed.run();
+    function expander() {
 
 
+              var backgroundChanger = document.createElement("div");
+              backgroundChanger.id = "backgroundChanger";
+              var lightBox = document.createElement("div");
+              lightBox.id = "lightBox";
+              var expandedImg = document.createElement("img");
+              expandedImg.id = "expandedImg";
+              var imageInfoDiv = document.createElement("div");
+              imageInfoDiv.className = "imageInfoDiv";
+              var caption = document.createElement("div");
+              caption.className = "caption";
+              var likes = document.createElement("div");
+              likes.className = "likes";
+              var location = document.createElement("div");
+              location.className = "location";
+              var thumbnails = document.getElementsByClassName("thumbnail");
+              var innerGallery = document.getElementById("innerGallery");
+              for (i = 0; i < thumbnails.length; i++) {
+                thumbnails[i].addEventListener("click", expandImage);
+              }
+              var next = document.createElement("div");
+              next.className = "next";
+              var prev = document.createElement("div");
+              prev.className = "previous";
+
+
+            function expandImage() {
+              expandedImg.src = this.src;
+              document.body.appendChild(backgroundChanger);
+              backgroundChanger.appendChild(lightBox);
+              lightBox.appendChild(expandedImg);
+              document.body.appendChild(prev);
+              prev.innerHTML = "<";
+              document.body.appendChild(next);
+              next.innerHTML = ">";
+              lightBox.appendChild(likes);
+              likes.innerHTML = this.getAttribute("data-likes");
+              lightBox.appendChild(imageInfoDiv);
+              imageInfoDiv.appendChild(caption);
+              caption.innerHTML = this.getAttribute("data-caption");
+
+              imageInfoDiv.appendChild(location);
+              location.innerHTML = this.getAttribute("data-location");
+              lightBox.style.width = expandedImg.width + "px";
+
+              lightBox.addEventListener("mouseover", function() {likes.style.visibility = "visible"});//function() {likes.style.visibility = visible};
+              lightBox.addEventListener("mouseout", function() {likes.style.visibility = "hidden"});
+              // expandedImg.addEventListener("click", removeImage);
+
+              backgroundChanger.addEventListener("click", removeImage);
+
+              document.body.querySelector(".previous").addEventListener("click", previousImg);
+              document.body.querySelector(".next").addEventListener("click", nextImg);
+              next.addEventListener("click", next);
+            }
+
+          //TO DO: Add captions DONE, favorite DONE. Next previous. Work on canvas
+
+            function removeImage() {
+              document.body.removeChild(backgroundChanger);
+              document.body.removeChild(prev);
+              document.body.removeChild(next);
+              backgroundChanger.removeChild(lightBox);
+              lightBox.removeChild(expandedImg);
+              backgroundChanger.removeEventListener("click", removeImage);
+            }
+    }
+
+    function previousImg() {
+      var length, current;
+      current = feed.options.custom.currentImage;
+      length = feed.options.custom.length;
+      if (current > 0) {
+        console.log("previous");
+        feed.options.custom.currentImage--;
+        feed.options.custom.showImage.call(feed);
+      }
+    }
+
+    function nextImg() {
+      var length, current, largeImg;
+      // largeImg = document.getElementById("instafeed");
+
+      current = feed.options.custom.currentImage;
+      length = feed.options.custom.images.length;
+      if (current < length - 1) {
+        feed.options.custom.currentImage++;
+        feed.options.custom.showImage.call(feed);
+        // largeImg.src = feed.options.custom.showImage.call(feed);
+        // largeImg.src = current;
+
+      }
+    }
+    //change custom showImage to change image within this this. maybe create array to find imges?
 
 
     var rgb = getAverageRGB(document.getElementById("i"));
