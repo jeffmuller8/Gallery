@@ -71,12 +71,14 @@ body {
   padding: 0;
   /*min-height: 150%;*/
   /*min-width: 100%;*/
-  background-color: rgba(0,0,0,0.5);
+  /*background-color: rgba(0,0,0,0.5);*/
   left: 0;
   right: 0;
   top: 0;
   bottom: 0;
   position: fixed;
+  /*background-image: url("images/background.jpg");*/
+
 }
 
 /*change lightbox to class*/
@@ -85,8 +87,6 @@ body {
   right: 0;
   top: 5%;
   margin: 0 auto;
-  /*height: 800px;
-  width: 800px;*/
   position: absolute;
   -webkit-box-shadow: 0px 0px 41px 0px rgba(0,0,0,0.75);
   -moz-box-shadow: 0px 0px 41px 0px rgba(0,0,0,0.75);
@@ -103,7 +103,7 @@ body {
 
 #expandedImg {
   position: relative;
-  opacity: .5;
+  opacity: 1;
 }
 
 .previous {
@@ -114,7 +114,8 @@ body {
   height: 150px;
   width: 150px;
   top: 35%;
-  left: 5%;
+  /*left: 5%;*/
+  left: -50%;
   position: absolute;
   background-color: black;
   -webkit-touch-callout: none;
@@ -135,7 +136,7 @@ body {
   font-size: 120px;
   height: 150px;
   width: 150px;
-  left: 86%;
+  right: -50%;
   top: 35%;
   position: absolute;
   background-color: black;

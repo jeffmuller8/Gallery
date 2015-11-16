@@ -5,6 +5,8 @@
     <link rel="stylesheet" type="text/css" href="style2.css">
     <link href='https://fonts.googleapis.com/css?family=Montserrat:400,700' rel='stylesheet' type='text/css'>
     <link href='https://fonts.googleapis.com/css?family=Roboto:400,100,100italic,300,300italic,400italic,500,500italic,700,700italic,900italic,900' rel='stylesheet' type='text/css'>
+    <script src="color-thief/src/color-thief.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
   </head>
 
   <body>
@@ -29,178 +31,155 @@
       clientId: '66e8640ecc1c4145af1bb497cda6897c',
       // custom: '<div class="location">{{location}}</div><div class="caption">{{caption}}</div><div class="likes">{{likes}}</div>',
       custom: {
-        images: [],
-        currentImage: 0,
-        showImage: function () {
-          var result, image, instafeeder;
-          // if (instafeeder != null) {
-            instafeeder = document.getElementById("instafeed");
-            image = this.options.custom.images[this.options.custom.currentImage];
-            result = this._makeTemplate(this.options.template, {
-              model: image,
-              id: image.id,
-              link: image.link,
-              image: image.images[this.options.resolution].url,
-              caption: this._getObjectProperty(image, 'caption.text'),
-              likes: image.likes.count,
-              comments: image.comments.count,
-              location: this._getObjectProperty(image, 'location.name')
-            });
-            instafeeder.innerHTML = result;
-          }
+        // images: [],
+        // currentImage: 0,
+        // showImage: function () {
+        //   var result, image, instafeeder;
+        //   // if (instafeeder != null) {
+        //     instafeeder = document.getElementById("instafeed");
+        //     image = this.options.custom.images[this.options.custom.currentImage];
+        //     result = this._makeTemplate(this.options.template, {
+        //       model: image,
+        //       id: image.id,
+        //       link: image.link,
+        //       image: image.images[this.options.resolution].url,
+        //       caption: this._getObjectProperty(image, 'caption.text'),
+        //       likes: image.likes.count,
+        //       comments: image.comments.count,
+        //       location: this._getObjectProperty(image, 'location.name')
+        //     });
+        //     instafeeder.innerHTML = result;
+        //   }
           // }
       },
       after: expander,
-      success: function (data) {
-        this.options.custom.images = data.data;
-        this.options.custom.showImage.call(this);
-      }
+      // success: function (data) {
+      //   this.options.custom.images = data.data;
+      //   this.options.custom.showImage.call(this);
+      // }
 
     });
 
     feed.run();
+    var position;
+    var currentImg;
+    var backgroundChanger = document.createElement("div");
+    backgroundChanger.id = "backgroundChanger";
+    var lightBox = document.createElement("div");
+    lightBox.id = "lightBox";
+    var expandedImg = document.createElement("img");
+    expandedImg.id = "expandedImg";
+    var likesDiv = document.createElement("div");
+    likesDiv.id = "likesDiv";
+    var imageInfoDiv = document.createElement("div");
+    imageInfoDiv.className = "imageInfoDiv";
+    var likes = document.createElement("div");
+    likes.className = "likes";
+    var location = document.createElement("div");
+    location.className = "location";
+    var thumbnails = document.getElementsByClassName("thumbnail");
+    var innerGallery = document.getElementById("innerGallery");
+    var next = document.createElement("div");
+    next.className = "next";
+    var prev = document.createElement("div");
+    prev.className = "previous";
+    var caption = document.createElement("div");
+    caption.className = "caption";
+    var imageObj = [];
     function expander() {
 
-
-              var backgroundChanger = document.createElement("div");
-              backgroundChanger.id = "backgroundChanger";
-              var lightBox = document.createElement("div");
-              lightBox.id = "lightBox";
-              var expandedImg = document.createElement("img");
-              expandedImg.id = "expandedImg";
-              var imageInfoDiv = document.createElement("div");
-              imageInfoDiv.className = "imageInfoDiv";
-              var caption = document.createElement("div");
-              caption.className = "caption";
-              var likes = document.createElement("div");
-              likes.className = "likes";
-              var location = document.createElement("div");
-              location.className = "location";
-              var thumbnails = document.getElementsByClassName("thumbnail");
-              var innerGallery = document.getElementById("innerGallery");
               for (i = 0; i < thumbnails.length; i++) {
                 thumbnails[i].addEventListener("click", expandImage);
+                imageObj[i] = {};
+                imageObj[i].source = thumbnails[i].src;
+                imageObj[i].caption = thumbnails[i].getAttribute("data-caption");
+                imageObj[i].likes = thumbnails[i].getAttribute("data-likes");
+                imageObj[i].location = thumbnails[i].getAttribute("data-location");
               }
-              var next = document.createElement("div");
-              next.className = "next";
-              var prev = document.createElement("div");
-              prev.className = "previous";
-
 
             function expandImage() {
+              that = this;
               expandedImg.src = this.src;
+
+              for (var i = 0; i < imageObj.length; i++) {
+                if (expandedImg.src === imageObj[i].source) {
+                  position = i;
+                }
+              }
               document.body.appendChild(backgroundChanger);
               backgroundChanger.appendChild(lightBox);
               lightBox.appendChild(expandedImg);
-              document.body.appendChild(prev);
+              var colorThief = new ColorThief();
+              colorThief.getColor(expandedImg.src);
+              console.log(colorThief);
+              lightBox.appendChild(prev);
               prev.innerHTML = "<";
-              document.body.appendChild(next);
+              lightBox.appendChild(next);
               next.innerHTML = ">";
               lightBox.appendChild(likes);
               likes.innerHTML = this.getAttribute("data-likes");
               lightBox.appendChild(imageInfoDiv);
               imageInfoDiv.appendChild(caption);
               caption.innerHTML = this.getAttribute("data-caption");
-
               imageInfoDiv.appendChild(location);
               location.innerHTML = this.getAttribute("data-location");
               lightBox.style.width = expandedImg.width + "px";
-
-              lightBox.addEventListener("mouseover", function() {likes.style.visibility = "visible"});//function() {likes.style.visibility = visible};
-              lightBox.addEventListener("mouseout", function() {likes.style.visibility = "hidden"});
-              // expandedImg.addEventListener("click", removeImage);
-
+              likesDiv.style.width = expandedImg.width + "px";
+              likesDiv.style.height = expandedImg.height + "px";
+              lightBox.addEventListener("mouseenter", function() {likes.style.visibility = "visible"});
+              lightBox.addEventListener("mouseleave", function() {likes.style.visibility = "hidden"});
+              prev.addEventListener("click", previousImg);
+              prev.addEventListener("mouseenter", function() {likes.style.visibility = "hidden"})
+              next.addEventListener("click", nextImg);
+              next.addEventListener("mouseenter", function() {likes.style.visibility = "hidden"})
               backgroundChanger.addEventListener("click", removeImage);
-
-              document.body.querySelector(".previous").addEventListener("click", previousImg);
-              document.body.querySelector(".next").addEventListener("click", nextImg);
-              next.addEventListener("click", next);
-            }
-
-          //TO DO: Add captions DONE, favorite DONE. Next previous. Work on canvas
-
-            function removeImage() {
-              document.body.removeChild(backgroundChanger);
-              document.body.removeChild(prev);
-              document.body.removeChild(next);
-              backgroundChanger.removeChild(lightBox);
-              lightBox.removeChild(expandedImg);
-              backgroundChanger.removeEventListener("click", removeImage);
             }
     }
 
-    function previousImg() {
-      var length, current;
-      current = feed.options.custom.currentImage;
-      length = feed.options.custom.length;
-      if (current > 0) {
-        console.log("previous");
-        feed.options.custom.currentImage--;
-        feed.options.custom.showImage.call(feed);
+    function previousImg(e) {
+      e.stopPropagation();
+        if (position === 0) {
+          prev.style.opacity = .2;
+          position = 0;
+        } else {
+          prev.style.opacity = 1;
+          next.style.opacity = 1;
+          position--;
+          expandedImg.src = imageObj[position].source;
+          caption.innerHTML = imageObj[position].caption;
+          likes.innerHTML = imageObj[position].likes;
+          location.innerHTML = imageObj[position].location
+          currentImg = position;
+          console.log(position, expandedImg.src);
+        }
+    }
+
+    function nextImg(e) {
+      e.stopPropagation();
+      if (position < imageObj.length - 1) {
+        position++
+        expandedImg.src = imageObj[position].source;
+        caption.innerHTML = imageObj[position].caption;
+        likes.innerHTML = imageObj[position].likes;
+        location.innerHTML = imageObj[position].location
+        currentImg = position;
+        prev.style.opacity = 1;
+        next.style.opacity = 1;
+        console.log(position, expandedImg.src);
+
+      } else {
+        next.style.opacity = .2;
+        position = imageObj.length - 1;
       }
     }
 
-    function nextImg() {
-      var length, current, largeImg;
-      // largeImg = document.getElementById("instafeed");
-
-      current = feed.options.custom.currentImage;
-      length = feed.options.custom.images.length;
-      if (current < length - 1) {
-        feed.options.custom.currentImage++;
-        feed.options.custom.showImage.call(feed);
-        // largeImg.src = feed.options.custom.showImage.call(feed);
-        // largeImg.src = current;
-
-      }
-    }
-    //change custom showImage to change image within this this. maybe create array to find imges?
-
-
-    var rgb = getAverageRGB(document.getElementById("i"));
-    document.body.style.backgroundColor = "rgb('+rgb.r+', '+rgb.b+', '+rgb.g+')";
-
-    function getAverageRGB(imgEl) {
-      var blockSize = 5, //every 5 pixels
-          defaultRGB = {r:0, g:0, b:0},
-          canvas = document.createElement,
-          context = canvas.getContext && canvas.getContext('2d'),
-          data, width, height,
-          i = -4,
-          length,
-          rgb = {r:0, g:0, b:0},
-          count = 0;
-
-      if (!context) {
-        return defaultRGB;
-      }
-
-      height = canvas.height = imgEl.naturalHeight || imgEl.offsetHeight || imgEl.height;
-      width = canvas.width = imgEl.naturalWidth || imgEl.offsetWidth || imgEl.width;
-
-      context.drawImage(imgEl, 0, 0);
-
-      try {
-        data = context.getImageData(0, 0, width, height);
-      } catch(e) {
-        console.log("x");
-        return defaultRGB;
-      }
-
-      length = data.data.length;
-
-      while ((i += blockSize * 4) < length) {
-        ++count;
-        rgb.r += data.data[i];
-        rgb.g += data.data[i+1];
-        rgb.b += data.data[i+2];
-      }
-
-      rgb.r = ~~(rgb.r/count);
-      rgb.g = ~~(rgb.g/count);
-      rgb.b = ~~(rgb.b/count);
-
-      return rgb;
+    function removeImage() {
+      document.body.removeChild(backgroundChanger);
+      lightBox.removeChild(prev);
+      lightBox.removeChild(next);
+      backgroundChanger.removeChild(lightBox);
+      lightBox.removeChild(expandedImg);
+      backgroundChanger.removeEventListener("click", removeImage);
     }
 
   };
