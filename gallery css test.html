@@ -5,8 +5,8 @@
     <link rel="stylesheet" type="text/css" href="style2.css">
     <link href='https://fonts.googleapis.com/css?family=Montserrat:400,700' rel='stylesheet' type='text/css'>
     <link href='https://fonts.googleapis.com/css?family=Roboto:400,100,100italic,300,300italic,400italic,500,500italic,700,700italic,900italic,900' rel='stylesheet' type='text/css'>
-    <script src="color-thief/src/color-thief.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+
   </head>
 
   <body>
@@ -22,49 +22,23 @@
   <script type="text/javascript" src="js/instafeed.min.js"></script>
   <script type="text/javascript">
   function init() {
-
     var feed = new Instafeed({
       get: 'user',
       userId: '1418648047',
       resolution: 'standard_resolution',
       template: '<img class="thumbnail" src="{{model.images.standard_resolution.url}}" data-caption="{{caption}}" data-likes="{{likes}} &hearts;" data-location="{{location}}"/>',
       clientId: '66e8640ecc1c4145af1bb497cda6897c',
-      // custom: '<div class="location">{{location}}</div><div class="caption">{{caption}}</div><div class="likes">{{likes}}</div>',
-      custom: {
-        // images: [],
-        // currentImage: 0,
-        // showImage: function () {
-        //   var result, image, instafeeder;
-        //   // if (instafeeder != null) {
-        //     instafeeder = document.getElementById("instafeed");
-        //     image = this.options.custom.images[this.options.custom.currentImage];
-        //     result = this._makeTemplate(this.options.template, {
-        //       model: image,
-        //       id: image.id,
-        //       link: image.link,
-        //       image: image.images[this.options.resolution].url,
-        //       caption: this._getObjectProperty(image, 'caption.text'),
-        //       likes: image.likes.count,
-        //       comments: image.comments.count,
-        //       location: this._getObjectProperty(image, 'location.name')
-        //     });
-        //     instafeeder.innerHTML = result;
-        //   }
-          // }
-      },
       after: expander,
-      // success: function (data) {
-      //   this.options.custom.images = data.data;
-      //   this.options.custom.showImage.call(this);
-      // }
-
     });
 
     feed.run();
+
     var position;
     var currentImg;
-    var backgroundChanger = document.createElement("div");
-    backgroundChanger.id = "backgroundChanger";
+    var backgroundLightBox = document.createElement("div");
+    backgroundLightBox.id = "backgroundLightBox";
+    var blur = document.createElement("div");
+    blur.id = "blur";
     var lightBox = document.createElement("div");
     lightBox.id = "lightBox";
     var expandedImg = document.createElement("img");
@@ -106,12 +80,14 @@
                   position = i;
                 }
               }
-              document.body.appendChild(backgroundChanger);
-              backgroundChanger.appendChild(lightBox);
+
+              //TO DO. Load more. background
+
+              document.body.appendChild(backgroundLightBox);
+              backgroundLightBox.appendChild(lightBox);
+              backgroundLightBox.appendChild(blur);
+              blur.style.backgroundImage = 'url('+expandedImg.src+')';
               lightBox.appendChild(expandedImg);
-              var colorThief = new ColorThief();
-              colorThief.getColor(expandedImg.src);
-              console.log(colorThief);
               lightBox.appendChild(prev);
               prev.innerHTML = "<";
               lightBox.appendChild(next);
@@ -132,7 +108,7 @@
               prev.addEventListener("mouseenter", function() {likes.style.visibility = "hidden"})
               next.addEventListener("click", nextImg);
               next.addEventListener("mouseenter", function() {likes.style.visibility = "hidden"})
-              backgroundChanger.addEventListener("click", removeImage);
+              backgroundLightBox.addEventListener("click", removeImage);
             }
     }
 
@@ -174,12 +150,12 @@
     }
 
     function removeImage() {
-      document.body.removeChild(backgroundChanger);
+      document.body.removeChild(backgroundLightBox);
       lightBox.removeChild(prev);
       lightBox.removeChild(next);
-      backgroundChanger.removeChild(lightBox);
+      backgroundLightBox.removeChild(lightBox);
       lightBox.removeChild(expandedImg);
-      backgroundChanger.removeEventListener("click", removeImage);
+      backgroundLightBox.removeEventListener("click", removeImage);
     }
 
   };
