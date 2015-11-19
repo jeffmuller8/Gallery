@@ -81,7 +81,7 @@
                 }
               }
 
-              //TO DO. Load more. background
+              //TO DO. Load more.
 
               document.body.appendChild(backgroundLightBox);
               backgroundLightBox.appendChild(lightBox);
@@ -122,6 +122,7 @@
           next.style.opacity = 1;
           position--;
           expandedImg.src = imageObj[position].source;
+          blur.style.backgroundImage = 'url('+expandedImg.src+')';
           caption.innerHTML = imageObj[position].caption;
           likes.innerHTML = imageObj[position].likes;
           location.innerHTML = imageObj[position].location
@@ -135,6 +136,7 @@
       if (position < imageObj.length - 1) {
         position++
         expandedImg.src = imageObj[position].source;
+        blur.style.backgroundImage = 'url('+expandedImg.src+')';
         caption.innerHTML = imageObj[position].caption;
         likes.innerHTML = imageObj[position].likes;
         location.innerHTML = imageObj[position].location
@@ -142,7 +144,6 @@
         prev.style.opacity = 1;
         next.style.opacity = 1;
         console.log(position, expandedImg.src);
-
       } else {
         next.style.opacity = .2;
         position = imageObj.length - 1;
