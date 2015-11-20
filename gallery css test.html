@@ -10,18 +10,20 @@
   </head>
 
   <body>
+    <div id="hero"><img src="images/instagram_logo.svg" id="logo"/><h1>Image Gallery</h1><h2>Created by Jeff Muller</h2><h3>Using Instafeed.js</h3></div>
     <div id="container">
       <div id="galleryBox">
         <div id="innerGallery"><div id="instafeed"></div></div>
-
         </div>
       </div>
+      <div id="loadImages"><h1>More</h1></div>
     </div>
 
   </body>
   <script type="text/javascript" src="js/instafeed.min.js"></script>
   <script type="text/javascript">
   function init() {
+    var loadImages = document.getElementById('loadImages');
     var feed = new Instafeed({
       get: 'user',
       userId: '1418648047',
@@ -29,6 +31,15 @@
       template: '<img class="thumbnail" src="{{model.images.standard_resolution.url}}" data-caption="{{caption}}" data-likes="{{likes}} &hearts;" data-location="{{location}}"/>',
       clientId: '66e8640ecc1c4145af1bb497cda6897c',
       after: expander,
+      function () {
+        if (!this.hasNext()) {
+          loadImages.setAttribute("disabled", "disabled");
+        }
+      }
+    });
+
+    loadImages.addEventListener("click", function () {
+      feed.next();
     });
 
     feed.run();
@@ -60,6 +71,7 @@
     var caption = document.createElement("div");
     caption.className = "caption";
     var imageObj = [];
+
     function expander() {
 
               for (i = 0; i < thumbnails.length; i++) {
@@ -80,9 +92,7 @@
                   position = i;
                 }
               }
-
-              //TO DO. Load more.
-
+              
               document.body.appendChild(backgroundLightBox);
               backgroundLightBox.appendChild(lightBox);
               backgroundLightBox.appendChild(blur);
@@ -115,11 +125,11 @@
     function previousImg(e) {
       e.stopPropagation();
         if (position === 0) {
-          prev.style.opacity = .2;
+          prev.style.opacity = .2; //before pseudo class
           position = 0;
         } else {
-          prev.style.opacity = 1;
-          next.style.opacity = 1;
+          // prev.style.opacity = 1;
+          // next.style.opacity = 1;
           position--;
           expandedImg.src = imageObj[position].source;
           blur.style.backgroundImage = 'url('+expandedImg.src+')';
@@ -141,8 +151,8 @@
         likes.innerHTML = imageObj[position].likes;
         location.innerHTML = imageObj[position].location
         currentImg = position;
-        prev.style.opacity = 1;
-        next.style.opacity = 1;
+        // prev.style.opacity = 1;
+        // next.style.opacity = 1;
         console.log(position, expandedImg.src);
       } else {
         next.style.opacity = .2;
@@ -158,8 +168,11 @@
       lightBox.removeChild(expandedImg);
       backgroundLightBox.removeEventListener("click", removeImage);
     }
-
   };
+
+
+
+
 
   window.onload = init();
   </script>

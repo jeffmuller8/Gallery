@@ -1,26 +1,43 @@
 body {
-  margin: 0;
+  margin-bottom: 2%;
   padding: 0;
-  background-color: black;
+  text-align: center;
+  position: relative;
+  background-color: white;
 }
 
 #container {
   margin-left: auto;
   margin-right: auto;
+  padding: 0;
   z-index: 0;
+}
+
+#hero {
+  max-width: 3840px;
+  height: 70vh;
+  background-image: url("images/hero.png");
+}
+
+#hero img {
+  height: 50%;
+}
+
+#logo {
+  left: 0;
+  right: 0;
+  text-align: center;
+  fill: #17ccc2;
 }
 
 #galleryBox {
   padding: 2%;
-  margin: 4%;
+  margin: 2%;
   background-color: white;
   z-index: 1;
 }
 
 #innerGallery {
-  margin-left: auto;
-  margin-right: auto;
-  text-align: center;
   z-index: 2;
 }
 
@@ -41,7 +58,7 @@ body {
   bottom: 0;
   position: fixed;
   z-index: 4;
-  /*background-image: url("images/background.jpg");*/
+  background-color: #17ccc2;
 }
 
 #blur {
@@ -55,8 +72,9 @@ body {
   display: block;
   z-index: 5;
   overflow: hidden;
+  opacity: .3;
   background-size: cover;
-  -webkit-filter: blur(15px);
+  -webkit-filter: blur(20px);
     -moz-filter: blur(5px);
     -o-filter: blur(5px);
     -ms-filter: blur(100%);
@@ -64,9 +82,9 @@ body {
   clip: rect(0px,200em,200em,2px);
   width: 120%;
   height: 120%;
+  transition: background 0.5s linear;
 }
 
-/*change lightbox to class*/
 #lightBox {
   left: 0;
   right: 0;
@@ -79,12 +97,21 @@ body {
   z-index: 6;
 }
 
-
 #expandedImg {
   position: relative;
   opacity: 1;
-  z-index: 9999999999;
   z-index: 7;
+}
+
+#loadImages {
+
+  margin-right: auto;
+  margin-left: auto;
+  height: 60px;
+  width: 300px;
+  background-color: #17ccc2;
+  text-align: center;
+  display: block;
 }
 
 .imageInfoDiv{
@@ -99,6 +126,7 @@ body {
 }
 
 .caption{
+  text-align: left;
   font-family: Roboto;
   font-size: 1em;
   font-weight: 200;
@@ -107,6 +135,7 @@ body {
 }
 
 .location{
+  text-align: left;
   font-family: Roboto;
   background-color: black;
   color: grey;
@@ -140,10 +169,10 @@ body {
   height: 150px;
   width: 150px;
   top: 35%;
-  /*left: 5%;*/
   left: -50%;
   position: absolute;
   background-color: black;
+  opacity: .5;
   -webkit-touch-callout: none;
     -webkit-user-select: none;
     -khtml-user-select: none;
@@ -154,6 +183,11 @@ body {
   border-radius: 150px;
   text-align: center;
   z-index: 7;
+}
+
+.previous:hover {
+  opacity: 1;
+  transition: all 0.5s ease;
 }
 
 .next {
@@ -167,6 +201,7 @@ body {
   top: 35%;
   position: absolute;
   background-color: black;
+  opacity: .5;
   -webkit-touch-callout: none;
     -webkit-user-select: none;
     -khtml-user-select: none;
@@ -177,4 +212,30 @@ body {
   border-radius: 150px;
   text-align: center;
   z-index: 8;
+}
+
+.next:hover {
+  opacity: 1;
+  transition: all 0.5s ease;
+}
+
+h1 {
+  font-family: Roboto;
+  font-size: 3em;
+  font-weight: 200;
+  color: white;
+}
+
+h2 {
+  font-family: Roboto;
+  font-size: 1.5em;
+  font-weight: 200;
+  color: white;
+}
+
+h3 {
+  font-family: Roboto;
+  font-size: 1em;
+  font-weight: 200;
+  color: white;
 }
