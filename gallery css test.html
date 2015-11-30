@@ -6,7 +6,7 @@
     <link href='https://fonts.googleapis.com/css?family=Montserrat:400,700' rel='stylesheet' type='text/css'>
     <link href='https://fonts.googleapis.com/css?family=Roboto:400,100,100italic,300,300italic,400italic,500,500italic,700,700italic,900italic,900' rel='stylesheet' type='text/css'>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
-
+      <script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?libraries=places"></script>
   </head>
 
   <body>
@@ -17,6 +17,7 @@
         </div>
       </div>
       <div id="loadImages"><h1>More</h1></div>
+      <div id="map"></div>
     </div>
 
   </body>
@@ -28,18 +29,26 @@
       get: 'user',
       userId: '1418648047',
       resolution: 'standard_resolution',
-      template: '<img class="thumbnail" src="{{model.images.standard_resolution.url}}" data-caption="{{caption}}" data-likes="{{likes}} &hearts;" data-location="{{location}}"/>',
+      template: '<img class="thumbnail" src="{{model.images.standard_resolution.url}}" data-caption="{{caption}}" data-likes="{{likes}} &hearts;" data-location ="{{location}}" data-geoLocation="{{model.location.latitude}},{{model.location.longitude}}"/>',
       clientId: '66e8640ecc1c4145af1bb497cda6897c',
       after: expander,
+             initializeMap,
       function () {
         if (!this.hasNext()) {
           loadImages.setAttribute("disabled", "disabled");
         }
       }
     });
-
     loadImages.addEventListener("click", function () {
       feed.next();
+      for (var i = 0; i < geoLocations.length; i++) {
+        var location = geoLocations[i];
+        var marker = new google.maps.Marker({
+          position: new google.maps.LatLng (location[0], location[1]),
+          map: map,
+          title: "Hell0",
+        });
+      }
     });
 
     feed.run();
@@ -71,6 +80,9 @@
     var caption = document.createElement("div");
     caption.className = "caption";
     var imageObj = [];
+    var locations = [];
+    var geoLocations = [];
+    var map;
 
     function expander() {
 
@@ -81,6 +93,12 @@
                 imageObj[i].caption = thumbnails[i].getAttribute("data-caption");
                 imageObj[i].likes = thumbnails[i].getAttribute("data-likes");
                 imageObj[i].location = thumbnails[i].getAttribute("data-location");
+                imageObj[i].geoLocation = thumbnails[i].getAttribute("data-geoLocation");
+                var array = imageObj[i].geoLocation.split(",");
+                array[0] = parseFloat(array[0]);
+                array[1] = parseFloat(array[1]);
+                locations.push(imageObj[i].location);
+                geoLocations.push(array);
               }
 
             function expandImage() {
@@ -92,7 +110,7 @@
                   position = i;
                 }
               }
-              
+
               document.body.appendChild(backgroundLightBox);
               backgroundLightBox.appendChild(lightBox);
               backgroundLightBox.appendChild(blur);
@@ -120,6 +138,7 @@
               next.addEventListener("mouseenter", function() {likes.style.visibility = "hidden"})
               backgroundLightBox.addEventListener("click", removeImage);
             }
+            initializeMap;
     }
 
     function previousImg(e) {
@@ -128,8 +147,6 @@
           prev.style.opacity = .2; //before pseudo class
           position = 0;
         } else {
-          // prev.style.opacity = 1;
-          // next.style.opacity = 1;
           position--;
           expandedImg.src = imageObj[position].source;
           blur.style.backgroundImage = 'url('+expandedImg.src+')';
@@ -151,8 +168,6 @@
         likes.innerHTML = imageObj[position].likes;
         location.innerHTML = imageObj[position].location
         currentImg = position;
-        // prev.style.opacity = 1;
-        // next.style.opacity = 1;
         console.log(position, expandedImg.src);
       } else {
         next.style.opacity = .2;
@@ -168,13 +183,35 @@
       lightBox.removeChild(expandedImg);
       backgroundLightBox.removeEventListener("click", removeImage);
     }
-  };
 
+          function initializeMap() {
+            var mapOptions = {
+              zoom: 3,
+              scrollwheel: false,
+              center: {lat:0, lng: 0},
+              mapTypeId: google.maps.MapTypeId.TERRAIN
+            };
+            map = new google.maps.Map(document.getElementById('map'),
+                  mapOptions);
 
+            for (var i = 0; i < geoLocations.length; i++) {
+              var location = geoLocations[i];
+              var marker = new google.maps.Marker({
+                position: new google.maps.LatLng (location[0], location[1]),
+                map: map,
+                title: "Hell0",
+        });
 
-
+        }
+      }
+          google.maps.event.addDomListener(window, 'load', initializeMap);
+  }
 
   window.onload = init();
+
+
+
+
   </script>
 
 </html>
